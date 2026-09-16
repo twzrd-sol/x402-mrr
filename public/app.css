@@ -1,0 +1,284 @@
+:root {
+  --paper: #efe6d0;
+  --paper-2: #e4d8b8;
+  --ink: #1c140c;
+  --ink-soft: #5a4e3e;
+  --rule: #1c140c;
+  --ranked: #1f6b3a;
+  --flagged: #9b1d1d;
+  --uneval: #6b6458;
+  --stamp: #9b1d1d;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Iowan Old Style", Palatino, "Palatino Linotype", "Book Antiqua", "Liberation Serif", Georgia, serif;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(28, 20, 12, 0.04), transparent 36%),
+    linear-gradient(180deg, rgba(28, 20, 12, 0.03), transparent 18%);
+}
+
+.skip {
+  position: absolute;
+  left: -999px;
+  top: 0;
+}
+.skip:focus {
+  left: 12px;
+  top: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 12px;
+  z-index: 10;
+}
+
+a { color: inherit; }
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 20px 80px;
+}
+
+.kicker {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: ui-monospace, "Cascadia Code", "IBM Plex Mono", Menlo, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 10px;
+}
+
+.masthead h1 {
+  font-size: clamp(3.4rem, 12vw, 8rem);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 0.85;
+  margin: 18px 0 8px;
+  letter-spacing: -0.04em;
+}
+
+.deck {
+  max-width: 46rem;
+  font-size: 1.15rem;
+  line-height: 1.45;
+  color: var(--ink);
+  margin: 0 0 28px;
+}
+
+.not-mrr {
+  display: inline-block;
+  border: 2px solid var(--stamp);
+  color: var(--stamp);
+  font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  transform: rotate(-2deg);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.bars {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin: 0 0 28px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr auto;
+  gap: 12px;
+  align-items: center;
+  font-size: 0.92rem;
+}
+
+.bar-track {
+  height: 14px;
+  background: var(--paper-2);
+  border: 1px solid var(--ink);
+}
+
+.bar-fill { height: 100%; }
+.bar-fill.ranked { background: var(--ranked); }
+.bar-fill.unevaluated { background: repeating-linear-gradient(135deg, var(--uneval) 0 6px, transparent 6px 10px); }
+.bar-fill.flagged { background: var(--flagged); }
+
+.bar-amt {
+  font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--ink);
+  margin: 12px 0 0;
+}
+
+.tabs button {
+  appearance: none;
+  background: transparent;
+  border: 2px solid transparent;
+  border-bottom: 0;
+  font: inherit;
+  font-style: italic;
+  font-size: 1.15rem;
+  padding: 10px 16px 8px;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.tabs button[aria-selected="true"] {
+  color: var(--ink);
+  background: var(--paper);
+  border-color: var(--ink);
+  margin-bottom: -2px;
+  padding-bottom: 10px;
+}
+
+.tabs button:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.panel { padding-top: 16px; }
+
+.stamp {
+  font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 2px solid currentColor;
+  padding: 2px 6px;
+  display: inline-block;
+}
+.stamp.ranked { color: var(--ranked); }
+.stamp.unevaluated { color: var(--uneval); }
+.stamp.flagged { color: var(--flagged); }
+
+.lede {
+  color: var(--ink-soft);
+  max-width: 42rem;
+  margin: 0 0 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+th {
+  text-align: left;
+  font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--ink);
+  padding: 8px 16px 8px 0;
+  white-space: nowrap;
+}
+
+td {
+  border-bottom: 1px solid rgba(28, 20, 12, 0.18);
+  padding: 10px 16px 10px 0;
+  vertical-align: top;
+}
+
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.wallet {
+  font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+tr.rowlink { cursor: pointer; }
+tr.rowlink:hover td { background: rgba(28, 20, 12, 0.04); }
+tr.rowlink:focus-visible { outline: 2px solid var(--ink); }
+
+.status, .empty, .error {
+  padding: 24px 0;
+  font-size: 1.1rem;
+}
+
+.error { color: var(--flagged); }
+
+.back {
+  font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px solid var(--ink);
+}
+
+.detail h2 {
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  font-weight: 500;
+  word-break: break-all;
+  margin: 16px 0;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 20px 0 28px;
+}
+
+.fact {
+  border: 1px solid var(--ink);
+  padding: 12px;
+}
+
+.fact dt {
+  font-family: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.fact dd {
+  margin: 6px 0 0;
+  font-size: 1.2rem;
+}
+
+.links a {
+  display: inline-block;
+  margin-right: 16px;
+  margin-top: 8px;
+}
+
+footer.colophon {
+  margin-top: 48px;
+  border-top: 1px solid var(--ink);
+  padding-top: 16px;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  max-width: 46rem;
+}
+
+@media (max-width: 720px) {
+  .kicker { flex-direction: column; }
+  .bar-row { grid-template-columns: 1fr; gap: 4px; }
+  .tabs button { font-size: 1rem; padding: 10px 10px 8px; }
+  th.hide-sm, td.hide-sm { display: none; }
+}

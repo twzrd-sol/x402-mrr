@@ -1,0 +1,20 @@
+[Unit]
+Description=x402-mrr settled leaderboard (loopback only)
+Documentation=file:///home/twzrd/x402-mrr/README.md
+After=network-online.target
+# Staged only. Do not enable until the operator says so.
+# Do not publish this unit onto cloudflared-battleship.
+
+[Service]
+Type=simple
+WorkingDirectory=%h/x402-mrr
+Environment=BIND=127.0.0.1
+Environment=PORT=4040
+Environment=DATA_DIR=%h/x402-mrr/data
+Environment=INTEL_BASE=https://intel.twzrd.xyz
+ExecStart=/usr/bin/node dist/index.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

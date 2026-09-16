@@ -1,0 +1,25 @@
+{
+  "name": "x402-mrr",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Public leaderboard of x402 observed settled volume, ranked after wash_flagged=true is excluded. Not MRR. Consumes intel.twzrd.xyz as a third-party integrator.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "test": "tsc && node --test dist/rank.test.js dist/store.test.js dist/server.test.js",
+    "refresh": "tsc && node dist/index.js --refresh-once"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.5",
+    "hono": "^4.9.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2"
+  }
+}
