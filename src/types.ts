@@ -54,6 +54,7 @@ export interface Board {
     gone_dark: number;
     overlay_full: number;
     overlay_partial: number;
+    payers_leader_lane: Lane | null;
   };
   ranked: LaneBoard;
   unevaluated: LaneBoard;

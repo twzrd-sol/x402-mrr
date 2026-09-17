@@ -63,4 +63,14 @@ test("board stats split the three wash lanes", () => {
   assert.equal(board.stats.overlay_full, full);
   assert.equal(board.stats.overlay_partial, partial);
   assert.equal(board.stats.overlay_full + board.stats.overlay_partial, board.stats.sellers);
+  const payerLeader = [...rows].sort(
+    (a, b) => b.unique_payers_90d - a.unique_payers_90d || a.merchant.localeCompare(b.merchant),
+  )[0];
+  const expectedLane =
+    payerLeader.wash_flagged === true
+      ? "flagged"
+      : payerLeader.wash_flagged === false
+        ? "ranked"
+        : "unevaluated";
+  assert.equal(board.stats.payers_leader_lane, expectedLane);
 });
