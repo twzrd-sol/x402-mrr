@@ -76,6 +76,29 @@ test("GET /llms.txt refuses the MRR claim", async () => {
   assert.match(text, /\/v1\/intel\/sellers/);
   assert.match(text, /not a discount/i);
   assert.match(text, /sliding scoring window/i);
+  assert.match(text, /inbound-only/i);
+});
+
+test("GET /app.js forbids shared cache and keeps overlay copy", async () => {
+  const app = appWithFixture();
+  const res = await app.request("/app.js");
+  assert.equal(res.status, 200);
+  const cc = res.headers.get("cache-control") ?? "";
+  assert.match(cc, /no-store/i);
+  const cdn = res.headers.get("cdn-cache-control") ?? "";
+  assert.match(cdn, /no-store/i);
+  const text = await res.text();
+  assert.match(text, /full overlay/);
+  assert.match(text, /inbound only|partial_inbound_only/);
+  assert.match(text, /not MRR/);
+});
+
+test("GET /app.css forbids shared cache", async () => {
+  const app = appWithFixture();
+  const res = await app.request("/app.css");
+  assert.equal(res.status, 200);
+  const cc = res.headers.get("cache-control") ?? "";
+  assert.match(cc, /no-store/i);
 });
 
 test("POST /mcp tools/call seller", async () => {

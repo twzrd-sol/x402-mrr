@@ -70,6 +70,26 @@ export function createApp(store: Store, config: Config, publicDir = "public"): H
   app.get("/", async (c) => c.html(await readFile(indexFile, "utf8")));
   app.get("/seller/:wallet", async (c) => c.html(await readFile(indexFile, "utf8")));
 
+  // Board assets must not sit in a shared cache (Cloudflare HIT of a stale
+  // app.js is how overlay copy vanished behind age:1940). Query-string bust
+  // is a live workaround; these headers are the shipped policy.
+  const noStore = {
+    "cache-control": "no-store",
+    "cdn-cache-control": "no-store",
+  } as const;
+  app.get("/app.js", async (c) =>
+    c.text(await readFile(path.join(publicDir, "app.js"), "utf8"), 200, {
+      "content-type": "text/javascript; charset=utf-8",
+      ...noStore,
+    }),
+  );
+  app.get("/app.css", async (c) =>
+    c.text(await readFile(path.join(publicDir, "app.css"), "utf8"), 200, {
+      "content-type": "text/css; charset=utf-8",
+      ...noStore,
+    }),
+  );
+
   app.use("/*", serveStatic({ root: publicDir }));
 
   return app;
