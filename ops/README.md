@@ -54,19 +54,14 @@ login — twzrd.xyz DNS needs `cert-twzrd-xyz.pem`.
 
 ## Doppler
 
-Project **`x402-mrr`**, config **`prd`**. V1 does not inject secrets at runtime —
-the leaderboard still reads public intel HTTP. `doppler run -p x402-mrr -c prd`
-is for later (Cloudflare API token or a rate-limit key), not for `x402-mrr.service`.
+Project **`x402-mrr`**, config **`prd`** (created 2026-09-17; empty plumbing, no
+wallet keys). V1 does not inject secrets at runtime — the leaderboard still
+reads public intel HTTP. `doppler run -p x402-mrr -c prd` is for later
+(Cloudflare API token or a rate-limit key), not for `x402-mrr.service`.
 
-Do not copy secrets from `outbid` or `twzrd-aggregator`. No wallet keys in this
-project.
+Do not copy secrets from `outbid` or `twzrd-aggregator`.
 
 ```bash
-doppler projects create x402-mrr --description "Settled ops plumbing. No wallet keys."
 doppler configs -p x402-mrr          # expect prd
 doppler run -p x402-mrr -c prd -- <cmd>
 ```
-
-Workplace was at the 10-project cap on 2026-09-17 (`doppler projects create`
-returned that limit). Free a slot or upgrade; do not rename a sibling project
-into this name.
