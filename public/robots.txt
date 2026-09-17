@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /llms.txt
+Allow: /api/leaderboard
+Allow: /health
+Allow: /#ranked
+Allow: /#unevaluated
+Allow: /#flagged
+
+# Settled: x402 receive-wallet observed volume, not MRR.
+# Machine copy: /llms.txt
+# JSON snapshot: /api/leaderboard?limit=50
+# Not the payer board at https://twzrd.xyz/leaderboard
+# Not attention markets at https://api.twzrd.xyz/v1/leaderboard
