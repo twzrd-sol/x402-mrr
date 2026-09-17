@@ -102,6 +102,8 @@ test("board JS explains the 90d window and unevaluated lane", () => {
   assert.match(js, /unique payers with wash orthogonal/);
   assert.match(js, /never puts/);
   assert.match(js, /fleet_dominated/);
+  assert.match(js, /laneFromHash/);
+  assert.match(js, /#\$\{lane\}/);
   const html = readFileSync(path.join(root, "public", "index.html"), "utf8");
   assert.match(html, /app\.js\?v=/);
 });
