@@ -155,6 +155,7 @@ function renderBoard(board) {
       <p>90 days is intel's public scoring window, not the size of the corpus. Older settles stay in intel's event table; they slide off this metric.</p>
       <p>The grey lane is <em>unevaluated</em> (wash overlay never ran) — not undervalued, not clean. Ranked is <code>wash_flagged=false</code> only.</p>
       <p>Intel ranks this same inventory by unique payers with wash orthogonal — a flagged receive wallet can be #1 there. Settled never puts <code>wash_flagged=true</code> in the ranked lane.</p>
+      <p>This board ranks <em>receive</em> wallets (payTo). It is not the payer/agent board at <a href="https://twzrd.xyz/leaderboard">twzrd.xyz/leaderboard</a> and not the attention markets at <a href="https://api.twzrd.xyz/v1/leaderboard">api.twzrd.xyz/v1/leaderboard</a>.</p>
       ${
         typeof s.overlay_full === "number"
           ? `<p>${Number(s.overlay_full).toLocaleString("en-US")} wallets have the two-sided wash overlay (<code>full</code>). ${Number(s.overlay_partial).toLocaleString("en-US")} are inbound-only (<code>partial_inbound_only</code>) — intel will not publish clean for those.</p>`

@@ -47,6 +47,9 @@ null is not clean and not a discount. true never enters the ranked lane. This bo
 - GET /health
 - POST /mcp  (tools: leaderboard, seller)
 - GET /llms.txt  (this file)
+- GET /#ranked  GET /#unevaluated  GET /#flagged  (HTML lanes)
+
+This is receive wallets (payTo), not the payer board at https://twzrd.xyz/leaderboard and not attention markets at https://api.twzrd.xyz/v1/leaderboard.
 
 Do not pay anyone because they appear here. Ranked means TWZRD's public card did not flag them — not an identity claim, not delivery proof, not a buy recommendation.
 `;
