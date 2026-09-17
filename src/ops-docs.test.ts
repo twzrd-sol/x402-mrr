@@ -85,4 +85,15 @@ test("shipped honesty copy forbids calling the metric MRR", () => {
   assert.match(HONESTY.wash, /null = never evaluated/);
   assert.match(HONESTY.wash, /never treated as clean/);
   assert.match(HONESTY.wash, /true = flagged, excluded from ranked/);
+  assert.match(HONESTY.wash, /not a discount/);
+  assert.match(HONESTY.window, /not the size of the corpus/);
+  assert.match(HONESTY.window, /slide off this board/);
+});
+
+test("board JS explains the 90d window and unevaluated lane", () => {
+  const js = readFileSync(path.join(root, "public", "app.js"), "utf8");
+  assert.match(js, /scoring window, not the size of the corpus/);
+  assert.match(js, /not undervalued, not clean/);
+  assert.match(js, /not a discount/);
+  assert.match(js, /not MRR/);
 });

@@ -116,6 +116,10 @@ function renderBoard(board) {
       ${barRow("unevaluated", `Unevaluated · ${s.unevaluated}`, s.unevaluated_volume_usd_90d, max)}
       ${barRow("flagged", `Flagged · ${s.flagged}`, s.flagged_volume_usd_90d, max)}
     </section>
+    <section class="folio">
+      <p>90 days is intel's public scoring window, not the size of the corpus. Older settles stay in intel's event table; they slide off this metric.</p>
+      <p>The grey lane is <em>unevaluated</em> (wash overlay never ran) — not undervalued, not clean. Ranked is <code>wash_flagged=false</code> only.</p>
+    </section>
     <div class="tabs" role="tablist" aria-label="Wash lanes">
       <button type="button" role="tab" id="tab-ranked" aria-selected="true" aria-controls="panel-ranked">Confirmed</button>
       <button type="button" role="tab" id="tab-unevaluated" aria-selected="false" aria-controls="panel-unevaluated">Unevaluated</button>
@@ -127,7 +131,7 @@ function renderBoard(board) {
         ${table(board.ranked.rows)}
       </section>
       <section class="panel" id="panel-unevaluated" role="tabpanel" hidden data-lane="unevaluated">
-        <p class="lede">Never evaluated. Shown so the missing coverage is visible. Do not read this lane as clean.</p>
+        <p class="lede">Never evaluated — missing wash overlay, not a discount. Shown so the coverage gap is visible. Do not read this lane as clean or undervalued.</p>
         ${table(board.unevaluated.rows)}
       </section>
       <section class="panel" id="panel-flagged" role="tabpanel" hidden data-lane="flagged">
