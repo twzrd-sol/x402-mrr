@@ -92,11 +92,16 @@ systemctl --user restart cloudflared-battleship.service
 DNS can stay; a missing ingress row 404s the new name only. Deleting the CNAME
 is optional cleanup.
 
+## Doppler
+
+Secrets for this tree belong in Doppler project **`x402-mrr`**, config **`prd`**.
+The public hostname and this tunnel row do not read Doppler. Do not copy
+`outbid` or `twzrd-aggregator` tokens into that project.
+
 ## Explicitly not this change
 
 - Do not bind the origin to `0.0.0.0`.
 - Do not put Settled on the `outbid-sh` tunnel or on `:4024`.
-- Do not create a Doppler project (still no secrets).
 - Do not edit `~/.cloudflared/*.json` credential files.
 - Do not `cloudflared tunnel route dns` or restart the unit from this checklist
   without a new operator go.
