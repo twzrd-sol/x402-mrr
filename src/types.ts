@@ -52,6 +52,8 @@ export interface Board {
     unevaluated_volume_usd_90d: number;
     flagged_volume_usd_90d: number;
     gone_dark: number;
+    overlay_full: number;
+    overlay_partial: number;
   };
   ranked: LaneBoard;
   unevaluated: LaneBoard;

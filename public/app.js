@@ -23,6 +23,12 @@ function stamp(lane) {
   return `<span class="stamp ${lane}">${label}</span>`;
 }
 
+function overlayLabel(confidence) {
+  if (confidence === "full") return "full overlay";
+  if (confidence === "partial_inbound_only") return "inbound only";
+  return confidence || "—";
+}
+
 function barRow(lane, label, value, max) {
   const pct = max > 0 ? Math.max(1, (value / max) * 100) : 0;
   return `<div class="bar-row">
@@ -54,6 +60,7 @@ function table(rows) {
         <td class="num hide-sm">${Number(row.unique_payers_90d).toLocaleString("en-US")}</td>
         <td class="num hide-sm">${Number(row.total_tx_90d).toLocaleString("en-US")}</td>
         <td class="hide-sm">${escapeHtml(dark)}</td>
+        <td class="hide-sm" title="${escapeHtml(row.wash_confidence || "")}">${escapeHtml(overlayLabel(row.wash_confidence))}</td>
         <td class="num hide-sm">${escapeHtml(growth)}</td>
       </tr>`;
     })
@@ -67,6 +74,7 @@ function table(rows) {
         <th class="num hide-sm">payers</th>
         <th class="num hide-sm">txs</th>
         <th class="hide-sm">activity</th>
+        <th class="hide-sm">overlay</th>
         <th class="num hide-sm">vs last snap</th>
       </tr>
     </thead>
@@ -119,6 +127,11 @@ function renderBoard(board) {
     <section class="folio">
       <p>90 days is intel's public scoring window, not the size of the corpus. Older settles stay in intel's event table; they slide off this metric.</p>
       <p>The grey lane is <em>unevaluated</em> (wash overlay never ran) — not undervalued, not clean. Ranked is <code>wash_flagged=false</code> only.</p>
+      ${
+        typeof s.overlay_full === "number"
+          ? `<p>${Number(s.overlay_full).toLocaleString("en-US")} wallets have the two-sided wash overlay (<code>full</code>). ${Number(s.overlay_partial).toLocaleString("en-US")} are inbound-only (<code>partial_inbound_only</code>) — intel will not publish clean for those.</p>`
+          : ""
+      }
     </section>
     <div class="tabs" role="tablist" aria-label="Wash lanes">
       <button type="button" role="tab" id="tab-ranked" aria-selected="true" aria-controls="panel-ranked">Confirmed</button>
@@ -168,6 +181,7 @@ function renderDetail(payload) {
       <div class="fact"><dt>unique payers</dt><dd>${Number(row.unique_payers_90d).toLocaleString("en-US")}</dd></div>
       <div class="fact"><dt>txs</dt><dd>${Number(row.total_tx_90d).toLocaleString("en-US")}</dd></div>
       <div class="fact"><dt>wash</dt><dd>${escapeHtml(String(row.wash_flagged))} / ${escapeHtml(row.wash_label || "—")}</dd></div>
+      <div class="fact"><dt>overlay</dt><dd>${escapeHtml(overlayLabel(row.wash_confidence))}</dd></div>
       <div class="fact"><dt>activity</dt><dd>${row.gone_dark ? "gone dark" : "recent"} · ${row.days_since_last_settle ?? "—"} d</dd></div>
       <div class="fact"><dt>vs last snap</dt><dd>${row.growth_pct === null || row.growth_pct === undefined ? "—" : `${row.growth_pct.toFixed(1)}%`}</dd></div>
     </dl>

@@ -76,6 +76,7 @@ test("GET /llms.txt refuses the MRR claim", async () => {
   assert.match(text, /\/v1\/intel\/sellers/);
   assert.match(text, /not a discount/i);
   assert.match(text, /sliding scoring window/i);
+  assert.match(text, /inbound-only/i);
 });
 
 test("POST /mcp tools/call seller", async () => {

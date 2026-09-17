@@ -50,11 +50,17 @@ test("second ingest computes growth against the prior snapshot", () => {
 test("board stats split the three wash lanes", () => {
   const db = openDb(":memory:");
   const store = createStore(db, loadConfig());
-  store.load(fixtureRows());
+  const rows = fixtureRows();
+  store.load(rows);
   const board = store.board(50);
   assert.equal(board.stats.ranked + board.stats.unevaluated + board.stats.flagged, board.stats.sellers);
   assert.equal(board.ranked.rows.every((r) => r.wash_flagged === false), true);
   assert.equal(board.flagged.rows.every((r) => r.wash_flagged === true), true);
   assert.equal(board.unevaluated.rows.every((r) => r.wash_flagged === null), true);
   assert.equal(board.honesty.metric.includes("MRR"), true);
+  const full = rows.filter((r) => r.wash_confidence === "full").length;
+  const partial = rows.filter((r) => r.wash_confidence === "partial_inbound_only").length;
+  assert.equal(board.stats.overlay_full, full);
+  assert.equal(board.stats.overlay_partial, partial);
+  assert.equal(board.stats.overlay_full + board.stats.overlay_partial, board.stats.sellers);
 });

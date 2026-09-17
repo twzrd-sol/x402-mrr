@@ -234,6 +234,8 @@ export function laneStats(db: DatabaseSync): {
   unevaluated_volume_usd_90d: number;
   flagged_volume_usd_90d: number;
   gone_dark: number;
+  overlay_full: number;
+  overlay_partial: number;
 } {
   const counts = db.prepare(
     `SELECT
@@ -244,7 +246,9 @@ export function laneStats(db: DatabaseSync): {
        COALESCE(SUM(CASE WHEN lane = 'ranked' THEN total_revenue_usd_90d ELSE 0 END), 0) AS ranked_vol,
        COALESCE(SUM(CASE WHEN lane = 'unevaluated' THEN total_revenue_usd_90d ELSE 0 END), 0) AS uneval_vol,
        COALESCE(SUM(CASE WHEN lane = 'flagged' THEN total_revenue_usd_90d ELSE 0 END), 0) AS flagged_vol,
-       SUM(CASE WHEN gone_dark = 1 THEN 1 ELSE 0 END) AS gone_dark
+       SUM(CASE WHEN gone_dark = 1 THEN 1 ELSE 0 END) AS gone_dark,
+       SUM(CASE WHEN wash_confidence = 'full' THEN 1 ELSE 0 END) AS overlay_full,
+       SUM(CASE WHEN wash_confidence = 'partial_inbound_only' THEN 1 ELSE 0 END) AS overlay_partial
      FROM sellers`,
   ).get() as Record<string, number>;
   return {
@@ -256,6 +260,8 @@ export function laneStats(db: DatabaseSync): {
     unevaluated_volume_usd_90d: roundUsd(Number(counts.uneval_vol ?? 0)),
     flagged_volume_usd_90d: roundUsd(Number(counts.flagged_vol ?? 0)),
     gone_dark: Number(counts.gone_dark ?? 0),
+    overlay_full: Number(counts.overlay_full ?? 0),
+    overlay_partial: Number(counts.overlay_partial ?? 0),
   };
 }
 
