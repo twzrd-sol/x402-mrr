@@ -1,7 +1,13 @@
 # Tunnel review — `settled.twzrd.xyz`
 
-Status: **staged, not applied.** This file is the apply checklist. Do not run the
-commands below until the operator names that step.
+Status: **applied 2026-09-17.** Public `https://settled.twzrd.xyz` returns 200
+(`/health`, `/`, `/llms.txt`). Origin is `x402-mrr.service` on `127.0.0.1:4040`.
+Ingress lives on `cloudflared-battleship.service`. Do not re-apply.
+
+Default `~/.cloudflared/cert.pem` authenticates the **outbid.sh** account. DNS
+for this hostname must use `TUNNEL_ORIGIN_CERT=~/.cloudflared/cert-twzrd-xyz.pem`.
+A first attempt with the default cert created `settled.twzrd.xyz.outbid.sh`;
+that CNAME was deleted (outbid zone API, HTTP 200).
 
 Proposed public hostname: **`settled.twzrd.xyz`**
 - DNS today: no A/AAAA/CNAME (checked 2026-09-17). Name is free on the zone.
@@ -50,7 +56,8 @@ name and still costs a tunnel restart.
    ```bash
    # NAME = the tunnel already serving intel.twzrd.xyz
    # (cloudflared tunnel list — do not paste UUID into tickets)
-   cloudflared tunnel route dns <NAME> settled.twzrd.xyz
+   TUNNEL_ORIGIN_CERT=~/.cloudflared/cert-twzrd-xyz.pem \
+     cloudflared tunnel route dns <NAME> settled.twzrd.xyz
    ```
    Equivalent dashboard: zone `twzrd.xyz`, CNAME `settled` →
    `<tunnel-uuid>.cfargotunnel.com`, proxied.

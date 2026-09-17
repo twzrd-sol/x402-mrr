@@ -43,7 +43,8 @@ Binds `127.0.0.1:4040` by default. `:4024` is outbid; do not collide. Host `0.0.
 
 ## Deploy
 
-See `ops/README.md`. Dockerfile is ready. systemd user unit is **staged, not enabled**. Cloudflare Tunnel ingress is **held**.
+Public: `https://settled.twzrd.xyz` (applied 2026-09-17, loopback origin
+`127.0.0.1:4040`). Deploy notes and rollback: `ops/README.md`.
 
 ## Honesty rules (do not regress)
 

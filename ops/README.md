@@ -40,16 +40,17 @@ systemctl --user daemon-reload
 
 ## Tunnel / DNS
 
-**Staged, not applied.** Review artifact:
+**Applied 2026-09-17:** `https://settled.twzrd.xyz` → `127.0.0.1:4040` via
+`cloudflared-battleship`. Review artifact (kept as the rollback map):
 
 - Hostname: `settled.twzrd.xyz` (no DNS today)
 - Snippet: `ops/cloudflared-ingress.snippet.yml`
 - Diff: `ops/config.yml.ingress.diff`
 - Apply/rollback checklist: `ops/TUNNEL-REVIEW.md`
 
-Adding a hostname to `cloudflared-battleship.service` is a live-prod change
-(api + intel + frontend share that connector). Do not apply the snippet,
-`cloudflared tunnel route dns`, or restart the unit without an explicit go.
+Do not add a second hostname or restart `cloudflared-battleship` without a new
+go. Rollback is in `ops/TUNNEL-REVIEW.md`. Default `cert.pem` is the outbid.sh
+login — twzrd.xyz DNS needs `cert-twzrd-xyz.pem`.
 
 ## Doppler
 

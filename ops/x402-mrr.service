@@ -2,8 +2,8 @@
 Description=x402-mrr settled leaderboard (loopback only)
 Documentation=file:///home/twzrd/x402-mrr/README.md
 After=network-online.target
-# Staged only. Do not enable until the operator says so.
-# Do not publish this unit onto cloudflared-battleship.
+# Loopback origin for settled.twzrd.xyz. Host bind stays 127.0.0.1.
+# Public exposure is the battleship tunnel ingress, not this unit.
 
 [Service]
 Type=simple
@@ -12,7 +12,8 @@ Environment=BIND=127.0.0.1
 Environment=PORT=4040
 Environment=DATA_DIR=%h/x402-mrr/data
 Environment=INTEL_BASE=https://intel.twzrd.xyz
-ExecStart=/usr/bin/node dist/index.js
+Environment=PATH=%h/.local/bin:/usr/bin
+ExecStart=%h/.local/bin/node dist/index.js
 Restart=on-failure
 RestartSec=5
 
