@@ -48,6 +48,24 @@ test("GET /api/leaderboard keeps flagged volume out of ranked", async () => {
   assert.ok(body.flagged.volume_usd_90d > body.ranked.volume_usd_90d);
 });
 
+test("GET /health identifies Settled, not MRR", async () => {
+  const app = appWithFixture();
+  const res = await app.request("/health");
+  assert.equal(res.status, 200);
+  const body = (await res.json()) as {
+    product: string;
+    metric: string;
+    not: string;
+    bind: string;
+    port: number;
+  };
+  assert.equal(body.product, "settled");
+  assert.equal(body.metric, "observed_settled_usd_90d");
+  assert.equal(body.not, "mrr");
+  assert.equal(body.bind, "127.0.0.1");
+  assert.equal(body.port, 4040);
+});
+
 test("GET /llms.txt refuses the MRR claim", async () => {
   const app = appWithFixture();
   const res = await app.request("/llms.txt");

@@ -4,7 +4,11 @@ Public leaderboard of **observed x402 settled volume**, ranked only after `wash_
 
 This is **not MRR**. x402 is per-call micropayments. Calling it recurring revenue would be a credibility bug on day one.
 
-Standalone sibling of `wzrd-final` and `outbid`. It consumes TWZRD the way any third-party integrator would: public HTTP only. No intel DB, no outbid token, no Cloudflare Tunnel until the operator names that change.
+Standalone sibling of `wzrd-final` and `outbid`. It consumes TWZRD the way any
+third-party integrator would: public HTTP only. No intel DB, no outbid token.
+Public hostname `https://settled.twzrd.xyz` is live (applied 2026-09-17);
+origin binds `127.0.0.1:4040`. Do not restart `x402-mrr.service` or
+`cloudflared-battleship` without a new go.
 
 ## Why this exists
 
