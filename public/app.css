@@ -96,8 +96,18 @@ a { color: inherit; }
   display: grid;
   grid-template-columns: 1fr;
   gap: 8px;
-  margin: 0 0 28px;
+  margin: 0 0 16px;
 }
+
+.folio {
+  max-width: 46rem;
+  font-size: 0.98rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin: 0 0 24px;
+}
+.folio p { margin: 0 0 0.55em; }
+.folio p:last-child { margin-bottom: 0; }
 
 .bar-row {
   display: grid;

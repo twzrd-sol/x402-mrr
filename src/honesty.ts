@@ -11,9 +11,9 @@ export const HONESTY: HonestyCopy = {
   metric:
     "total_revenue_usd_90d from GET /v1/intel/sellers (observed settlement, not seller-reported). Micropayments are not recurring revenue — do not call this MRR.",
   window:
-    "90 days, because that is the window intel publishes. There is no 30-day public series on this integrator path.",
+    "90 days is intel's public scoring window (GET /v1/intel/sellers), not the size of the corpus. Older settles remain in intel's event table; they slide off this board. There is no 30-day public series on this integrator path.",
   wash:
-    "wash_flagged is tri-state. true = flagged, excluded from ranked. false = evaluated and not flagged, the only ranked lane. null = never evaluated, shown greyed, never treated as clean.",
+    "wash_flagged is tri-state. true = flagged, excluded from ranked. false = evaluated and not flagged, the only ranked lane. null = never evaluated (missing wash overlay), shown greyed, never treated as clean and not a discount.",
 };
 
 export const USER_AGENT =

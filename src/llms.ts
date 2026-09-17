@@ -34,7 +34,8 @@ export function renderLlmsTxt(board: Board): string {
 | flagged (wash_flagged=true) | ${s.flagged} | ${usd(s.flagged_volume_usd_90d)} |
 | all | ${s.sellers} | ${usd(s.ranked_volume_usd_90d + s.unevaluated_volume_usd_90d + s.flagged_volume_usd_90d)} |
 
-null is not clean. true never enters the ranked lane. This board does not recompute wash.
+null is not clean and not a discount. true never enters the ranked lane. This board does not recompute wash.
+90 days is a sliding scoring window; older settles remain in intel's event table.
 
 ## HTTP
 
