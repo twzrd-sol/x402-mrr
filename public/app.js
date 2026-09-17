@@ -78,13 +78,13 @@ function table(rows) {
         <td>${row.rank_in_lane}</td>
         <td class="wallet">${escapeHtml(shortWallet(row.merchant))}</td>
         <td class="num">${usd(row.total_revenue_usd_90d)}</td>
-        <td class="num hide-sm">${Number(row.unique_payers_90d).toLocaleString("en-US")}</td>
+        <td class="num">${Number(row.unique_payers_90d).toLocaleString("en-US")}</td>
         <td class="num hide-sm">${Number(row.total_tx_90d).toLocaleString("en-US")}</td>
         <td class="hide-sm">${escapeHtml(dark)}</td>
         <td class="hide-sm" title="${escapeHtml(row.wash_label || "")}">${escapeHtml(washLabel(row.wash_label))}</td>
         <td class="num hide-sm">${escapeHtml(pct(row.captive_payer_pct))}</td>
         <td class="num hide-sm">${escapeHtml(pct(row.heavy_fleet_revenue_pct))}</td>
-        <td class="hide-sm" title="${escapeHtml(row.wash_confidence || "")}">${escapeHtml(overlayLabel(row.wash_confidence))}</td>
+        <td title="${escapeHtml(row.wash_confidence || "")}">${escapeHtml(overlayLabel(row.wash_confidence))}</td>
         <td class="num hide-sm">${escapeHtml(growth)}</td>
       </tr>`;
     })
@@ -95,13 +95,13 @@ function table(rows) {
         <th>#</th>
         <th>wallet</th>
         <th class="num">observed USD / 90d</th>
-        <th class="num hide-sm">payers</th>
+        <th class="num">payers</th>
         <th class="num hide-sm">txs</th>
         <th class="hide-sm">activity</th>
         <th class="hide-sm">label</th>
         <th class="num hide-sm">captive</th>
         <th class="num hide-sm">fleet</th>
-        <th class="hide-sm">overlay</th>
+        <th>overlay</th>
         <th class="num hide-sm">vs last snap</th>
       </tr>
     </thead>
@@ -188,25 +188,49 @@ function renderBoard(board) {
     ${colophon(board)}
   </main>`;
 
+  bindTabs();
+  bindRows(app);
+}
+
+const LANES = ["ranked", "unevaluated", "flagged"];
+
+function laneFromHash() {
+  const h = (window.location.hash || "").replace(/^#/, "");
+  return LANES.includes(h) ? h : "ranked";
+}
+
+function showLane(lane) {
+  const name = LANES.includes(lane) ? lane : "ranked";
   const tabs = [...app.querySelectorAll('[role="tab"]')];
   const panels = [...app.querySelectorAll('[role="tabpanel"]')];
   tabs.forEach((tab) => {
+    tab.setAttribute("aria-selected", tab.id === `tab-${name}` ? "true" : "false");
+  });
+  panels.forEach((p) => {
+    p.hidden = p.id !== `panel-${name}`;
+  });
+}
+
+function bindTabs() {
+  const tabs = [...app.querySelectorAll('[role="tab"]')];
+  tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      const target = tab.getAttribute("aria-controls");
-      tabs.forEach((t) => t.setAttribute("aria-selected", t === tab ? "true" : "false"));
-      panels.forEach((p) => {
-        p.hidden = p.id !== target;
-      });
+      const lane = tab.id.replace(/^tab-/, "");
+      if (lane !== laneFromHash()) {
+        history.replaceState(null, "", `#${lane}`);
+      }
+      showLane(lane);
     });
   });
-  bindRows(app);
+  window.addEventListener("hashchange", () => showLane(laneFromHash()));
+  showLane(laneFromHash());
 }
 
 function renderDetail(payload) {
   const row = payload.seller;
   const links = payload.links || {};
   app.innerHTML = `<main class="page detail">
-    <p><a class="back" href="/">← Board</a></p>
+    <p><a class="back" href="/#${escapeHtml(row.lane || "ranked")}">← Board</a></p>
     <p>${stamp(row.lane)}</p>
     <h2>${escapeHtml(row.merchant)}</h2>
     <dl class="facts">
