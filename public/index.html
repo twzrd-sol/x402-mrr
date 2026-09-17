@@ -6,8 +6,10 @@
     <title>Settled — x402 observed volume, not MRR</title>
     <meta
       name="description"
-      content="Leaderboard of x402 receive wallets by observed settled USD. Ranked only when wash_flagged is false. Not MRR."
+      content="x402 receive-wallet leaderboard by observed USD. Ranked only when wash_flagged=false. Not the payer board at twzrd.xyz/leaderboard. Not MRR."
     />
+    <link rel="alternate" type="application/json" href="/api/leaderboard?limit=50" title="Settled snapshot JSON" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Settled for agents" />
     <link rel="stylesheet" href="/app.css" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23efe6d0' width='32' height='32'/%3E%3Ctext x='4' y='22' font-size='16' fill='%231c140c'%3ES%3C/text%3E%3C/svg%3E" />
   </head>
@@ -16,6 +18,6 @@
     <div id="app">
       <p class="status">Loading snapshot…</p>
     </div>
-    <script type="module" src="/app.js?v=lanes-1"></script>
+    <script type="module" src="/app.js?v=agents-1"></script>
   </body>
 </html>

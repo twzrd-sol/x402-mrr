@@ -78,6 +78,19 @@ test("GET /llms.txt refuses the MRR claim", async () => {
   assert.match(text, /sliding scoring window/i);
   assert.match(text, /inbound-only/i);
   assert.match(text, /unique payers with wash orthogonal/i);
+  assert.match(text, /receive wallets/i);
+  assert.match(text, /twzrd\.xyz\/leaderboard/);
+});
+
+test("GET / advertises JSON and llms alternate feeds", async () => {
+  const app = appWithFixture();
+  const res = await app.request("/");
+  assert.equal(res.status, 200);
+  const html = await res.text();
+  assert.match(html, /rel="alternate"/);
+  assert.match(html, /\/api\/leaderboard/);
+  assert.match(html, /\/llms\.txt/);
+  assert.match(html, /receive-wallet/);
 });
 
 test("GET /app.js forbids shared cache and keeps overlay copy", async () => {
