@@ -82,6 +82,17 @@ test("GET /llms.txt refuses the MRR claim", async () => {
   assert.match(text, /twzrd\.xyz\/leaderboard/);
 });
 
+test("GET /robots.txt points agents at llms and JSON", async () => {
+  const app = appWithFixture();
+  const res = await app.request("/robots.txt");
+  assert.equal(res.status, 200);
+  const text = await res.text();
+  assert.match(text, /llms\.txt/);
+  assert.match(text, /\/api\/leaderboard/);
+  assert.match(text, /not MRR/i);
+  assert.match(text, /twzrd\.xyz\/leaderboard/);
+});
+
 test("GET / advertises JSON and llms alternate feeds", async () => {
   const app = appWithFixture();
   const res = await app.request("/");

@@ -90,6 +90,18 @@ test("shipped honesty copy forbids calling the metric MRR", () => {
   assert.match(HONESTY.window, /slide off this board/);
 });
 
+test("overnight queue names holds and at least three remaining slices", () => {
+  const queue = readFileSync(path.join(root, "ops", "OVERNIGHT.md"), "utf8");
+  assert.match(queue, /x402-mrr\.service/);
+  assert.match(queue, /cloudflared-battleship/);
+  assert.match(queue, /0\.0\.0\.0/);
+  assert.match(queue, /wzrd-final/);
+  assert.match(queue, /never MRR|not MRR|not-MRR/);
+  assert.match(queue, /## Remaining/);
+  const remaining = [...queue.matchAll(/^\d+\. \*\*(SHIP|HOLD)\*\*/gm)];
+  assert.ok(remaining.length >= 3, `need >=3 remaining slices, got ${remaining.length}`);
+});
+
 test("board JS explains the 90d window and unevaluated lane", () => {
   const js = readFileSync(path.join(root, "public", "app.js"), "utf8");
   assert.match(js, /scoring window, not the size of the corpus/);
