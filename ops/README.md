@@ -1,6 +1,9 @@
-# Deploy (staged, not live)
+# Deploy (applied 2026-09-17)
 
-Public hostname and Cloudflare Tunnel ingress are **held**. This process binds loopback on the host.
+Public hostname `https://settled.twzrd.xyz` is live. Origin unit
+`x402-mrr.service` binds loopback `127.0.0.1:4040`. Ingress is on
+`cloudflared-battleship`. Do not restart either unit without a new go.
+Public copy is observed settled volume, not MRR.
 
 ## Local process
 
@@ -29,21 +32,24 @@ Never `-p 0.0.0.0:4040:4040` and never `-p 4040:4040`.
 
 ## systemd user unit
 
-`ops/x402-mrr.service` is staged. Do **not** `systemctl --user enable --now` it until the operator names that step. Installing the unit file:
+`ops/x402-mrr.service` is the live origin (user scope, enabled, bind
+`127.0.0.1:4040`). Do not `systemctl --user restart` it without a new go.
+The unit file in git is the source; copy only if the installed unit drifted:
 
 ```bash
 mkdir -p ~/.config/systemd/user
 cp ops/x402-mrr.service ~/.config/systemd/user/
 systemctl --user daemon-reload
-# enable only when told
+# do not restart or re-enable from this page
 ```
 
 ## Tunnel / DNS
 
 **Applied 2026-09-17:** `https://settled.twzrd.xyz` → `127.0.0.1:4040` via
-`cloudflared-battleship`. Review artifact (kept as the rollback map):
+`cloudflared-battleship`. Review artifacts are the rollback map, not a “still
+unapplied” checklist:
 
-- Hostname: `settled.twzrd.xyz` (no DNS today)
+- Hostname: `settled.twzrd.xyz` (live)
 - Snippet: `ops/cloudflared-ingress.snippet.yml`
 - Diff: `ops/config.yml.ingress.diff`
 - Apply/rollback checklist: `ops/TUNNEL-REVIEW.md`
