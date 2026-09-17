@@ -1,0 +1,12 @@
+--- a/home/twzrd/.cloudflared/config.yml
++++ b/home/twzrd/.cloudflared/config.yml
+@@
+   - hostname: pitch.twzrd.xyz
+     service: http://127.0.0.1:8080
+ 
++  # Settled (x402-mrr) — observed volume leaderboard. Loopback origin.
++  - hostname: settled.twzrd.xyz
++    service: http://127.0.0.1:4040
++
+   # Catch-all (required by cloudflared)
+   - service: http_status:404

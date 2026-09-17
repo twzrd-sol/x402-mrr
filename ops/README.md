@@ -40,9 +40,16 @@ systemctl --user daemon-reload
 
 ## Tunnel / DNS
 
-Adding a hostname to `cloudflared-battleship.service` is a live-prod change. Stage an ingress snippet for review; do not apply it unattended.
+**Staged, not applied.** Review artifact:
 
-Suggested later hostname (not claimed): `settled.twzrd.xyz` or similar — pick when exposing.
+- Hostname: `settled.twzrd.xyz` (no DNS today)
+- Snippet: `ops/cloudflared-ingress.snippet.yml`
+- Diff: `ops/config.yml.ingress.diff`
+- Apply/rollback checklist: `ops/TUNNEL-REVIEW.md`
+
+Adding a hostname to `cloudflared-battleship.service` is a live-prod change
+(api + intel + frontend share that connector). Do not apply the snippet,
+`cloudflared tunnel route dns`, or restart the unit without an explicit go.
 
 ## Doppler
 

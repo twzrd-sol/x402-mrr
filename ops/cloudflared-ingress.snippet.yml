@@ -1,0 +1,11 @@
+# REVIEW ONLY. Do not copy into ~/.cloudflared/config.yml until the operator
+# names apply. Validated 2026-09-17 against a temp copy of the live battleship
+# config: settled matched rule #7 -> http://127.0.0.1:4040; intel and api
+# still matched their existing rules. Temp copy was deleted.
+#
+# Insert immediately BEFORE the catch-all `service: http_status:404`.
+# First-match wins. Catch-all must remain last.
+
+  # Settled (x402-mrr) — observed volume leaderboard. Loopback origin.
+  - hostname: settled.twzrd.xyz
+    service: http://127.0.0.1:4040
