@@ -29,6 +29,27 @@ function overlayLabel(confidence) {
   return confidence || "—";
 }
 
+function washLabel(label) {
+  if (label === "fleet_dominated") return "fleet";
+  if (label === "wash_shaped") return "wash-shaped";
+  if (label === "provider_narrow_or_unknown") return "narrow/unknown";
+  if (label === "provider_mixed") return "mixed";
+  if (label === "provider_organic_broad") return "broad";
+  return label || "—";
+}
+
+function pct(n) {
+  if (n === null || n === undefined || Number.isNaN(Number(n))) return "—";
+  return `${Number(n).toFixed(0)}%`;
+}
+
+function laneName(lane) {
+  if (lane === "ranked") return "confirmed";
+  if (lane === "flagged") return "flagged";
+  if (lane === "unevaluated") return "unevaluated";
+  return lane || "unknown";
+}
+
 function barRow(lane, label, value, max) {
   const pct = max > 0 ? Math.max(1, (value / max) * 100) : 0;
   return `<div class="bar-row">
@@ -60,6 +81,9 @@ function table(rows) {
         <td class="num hide-sm">${Number(row.unique_payers_90d).toLocaleString("en-US")}</td>
         <td class="num hide-sm">${Number(row.total_tx_90d).toLocaleString("en-US")}</td>
         <td class="hide-sm">${escapeHtml(dark)}</td>
+        <td class="hide-sm" title="${escapeHtml(row.wash_label || "")}">${escapeHtml(washLabel(row.wash_label))}</td>
+        <td class="num hide-sm">${escapeHtml(pct(row.captive_payer_pct))}</td>
+        <td class="num hide-sm">${escapeHtml(pct(row.heavy_fleet_revenue_pct))}</td>
         <td class="hide-sm" title="${escapeHtml(row.wash_confidence || "")}">${escapeHtml(overlayLabel(row.wash_confidence))}</td>
         <td class="num hide-sm">${escapeHtml(growth)}</td>
       </tr>`;
@@ -74,6 +98,9 @@ function table(rows) {
         <th class="num hide-sm">payers</th>
         <th class="num hide-sm">txs</th>
         <th class="hide-sm">activity</th>
+        <th class="hide-sm">label</th>
+        <th class="num hide-sm">captive</th>
+        <th class="num hide-sm">fleet</th>
         <th class="hide-sm">overlay</th>
         <th class="num hide-sm">vs last snap</th>
       </tr>
@@ -127,9 +154,15 @@ function renderBoard(board) {
     <section class="folio">
       <p>90 days is intel's public scoring window, not the size of the corpus. Older settles stay in intel's event table; they slide off this metric.</p>
       <p>The grey lane is <em>unevaluated</em> (wash overlay never ran) — not undervalued, not clean. Ranked is <code>wash_flagged=false</code> only.</p>
+      <p>Intel ranks this same inventory by unique payers with wash orthogonal — a flagged receive wallet can be #1 there. Settled never puts <code>wash_flagged=true</code> in the ranked lane.</p>
       ${
         typeof s.overlay_full === "number"
           ? `<p>${Number(s.overlay_full).toLocaleString("en-US")} wallets have the two-sided wash overlay (<code>full</code>). ${Number(s.overlay_partial).toLocaleString("en-US")} are inbound-only (<code>partial_inbound_only</code>) — intel will not publish clean for those.</p>`
+          : ""
+      }
+      ${
+        s.payers_leader_lane
+          ? `<p>On this snapshot the unique-payer leader sits in the <em>${escapeHtml(laneName(s.payers_leader_lane))}</em> lane.</p>`
           : ""
       }
     </section>
@@ -180,7 +213,8 @@ function renderDetail(payload) {
       <div class="fact"><dt>observed USD / 90d</dt><dd>${usd(row.total_revenue_usd_90d)}</dd></div>
       <div class="fact"><dt>unique payers</dt><dd>${Number(row.unique_payers_90d).toLocaleString("en-US")}</dd></div>
       <div class="fact"><dt>txs</dt><dd>${Number(row.total_tx_90d).toLocaleString("en-US")}</dd></div>
-      <div class="fact"><dt>wash</dt><dd>${escapeHtml(String(row.wash_flagged))} / ${escapeHtml(row.wash_label || "—")}</dd></div>
+      <div class="fact"><dt>wash</dt><dd>${escapeHtml(String(row.wash_flagged))} / ${escapeHtml(washLabel(row.wash_label))}</dd></div>
+      <div class="fact"><dt>captive / fleet</dt><dd>${escapeHtml(pct(row.captive_payer_pct))} / ${escapeHtml(pct(row.heavy_fleet_revenue_pct))}</dd></div>
       <div class="fact"><dt>overlay</dt><dd>${escapeHtml(overlayLabel(row.wash_confidence))}</dd></div>
       <div class="fact"><dt>activity</dt><dd>${row.gone_dark ? "gone dark" : "recent"} · ${row.days_since_last_settle ?? "—"} d</dd></div>
       <div class="fact"><dt>vs last snap</dt><dd>${row.growth_pct === null || row.growth_pct === undefined ? "—" : `${row.growth_pct.toFixed(1)}%`}</dd></div>

@@ -77,6 +77,7 @@ test("GET /llms.txt refuses the MRR claim", async () => {
   assert.match(text, /not a discount/i);
   assert.match(text, /sliding scoring window/i);
   assert.match(text, /inbound-only/i);
+  assert.match(text, /unique payers with wash orthogonal/i);
 });
 
 test("GET /app.js forbids shared cache and keeps overlay copy", async () => {

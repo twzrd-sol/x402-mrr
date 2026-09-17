@@ -236,6 +236,7 @@ export function laneStats(db: DatabaseSync): {
   gone_dark: number;
   overlay_full: number;
   overlay_partial: number;
+  payers_leader_lane: RankedSeller["lane"] | null;
 } {
   const counts = db.prepare(
     `SELECT
@@ -262,6 +263,14 @@ export function laneStats(db: DatabaseSync): {
     gone_dark: Number(counts.gone_dark ?? 0),
     overlay_full: Number(counts.overlay_full ?? 0),
     overlay_partial: Number(counts.overlay_partial ?? 0),
+    payers_leader_lane: (() => {
+      const row = db.prepare(
+        "SELECT lane FROM sellers ORDER BY unique_payers_90d DESC, merchant ASC LIMIT 1",
+      ).get() as { lane?: string } | undefined;
+      const lane = row?.lane;
+      if (lane === "ranked" || lane === "unevaluated" || lane === "flagged") return lane;
+      return null;
+    })(),
   };
 }
 

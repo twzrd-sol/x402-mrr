@@ -35,6 +35,7 @@ export function renderLlmsTxt(board: Board): string {
 | all | ${s.sellers} | ${usd(s.ranked_volume_usd_90d + s.unevaluated_volume_usd_90d + s.flagged_volume_usd_90d)} |
 
 Wash overlay: ${s.overlay_full} full (two-sided), ${s.overlay_partial} inbound-only. Ranked requires full overlay and wash_flagged=false.
+Intel ranks this inventory by unique payers with wash orthogonal. On this snapshot the unique-payer leader sits in the ${s.payers_leader_lane ?? "unknown"} lane. Settled never puts wash_flagged=true in the ranked lane.
 
 null is not clean and not a discount. true never enters the ranked lane. This board does not recompute wash.
 90 days is a sliding scoring window; older settles remain in intel's event table.
