@@ -31,15 +31,14 @@ reload stays HOLD.
 - #5 hash-address lanes; overlay on small screens
 - #6 agent feeds; receive wallets ≠ payer board (`6aa802b`)
 - `GET /robots.txt` → `/llms.txt` and `/api/leaderboard` (this branch)
+- JSON-LD `ItemList` for the visible receive-wallet lane (`app.js?v=jsonld-1`)
 
 ## Remaining (ordered)
 
-1. **SHIP** — JSON-LD `ItemList` on the board for the visible lane
-   (`public/app.js`, cache-bust). Receive wallets only; not MRR.
-2. **SHIP** — `rel=canonical` on `index.html` plus Open Graph copy that
+1. **SHIP** — `rel=canonical` on `index.html` plus Open Graph copy that
    says receive-wallet board, not `twzrd.xyz/leaderboard`.
-3. **HOLD** — origin boot of `x402-mrr.service` so createApp `no-store`,
+2. **HOLD** — origin boot of `x402-mrr.service` so createApp `no-store`,
    folio `overlay_full` / `payers_leader_lane`, and `/llms.txt` body go
    live. Do not restart `cloudflared-battleship`.
-4. **HOLD** — MCP `leaderboard` tool description: receive vs payer vs
+3. **HOLD** — MCP `leaderboard` tool description: receive vs payer vs
    attention markets (needs `dist/` reload).

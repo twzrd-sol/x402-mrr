@@ -125,3 +125,55 @@ test("board JS explains the 90d window and unevaluated lane", () => {
   assert.match(html, /\/llms\.txt/);
   assert.match(html, /receive-wallet/);
 });
+
+function shippedItemListJsonLd() {
+  const js = readFileSync(path.join(root, "public", "app.js"), "utf8");
+  const start = js.indexOf("function itemListJsonLd");
+  assert.ok(start >= 0, "public/app.js must ship itemListJsonLd");
+  const end = js.indexOf("\nfunction rowsForLane", start);
+  assert.ok(end > start, "public/app.js must bound itemListJsonLd before rowsForLane");
+  return new Function(`${js.slice(start, end)}; return itemListJsonLd;`)();
+}
+
+test("shipped board JS emits schema.org ItemList for the visible receive-wallet lane", () => {
+  const js = readFileSync(path.join(root, "public", "app.js"), "utf8");
+  assert.match(js, /@type": "ItemList"/);
+  assert.match(js, /https:\/\/schema\.org/);
+  assert.match(js, /application\/ld\+json/);
+  assert.match(js, /receive wallets \(payTo\)/);
+  assert.match(js, /Not MRR/);
+  assert.match(js, /twzrd\.xyz\/leaderboard/);
+  assert.match(js, /injectItemListJsonLd/);
+  const html = readFileSync(path.join(root, "public", "index.html"), "utf8");
+  assert.match(html, /app\.js\?v=/);
+  assert.match(html, /app\.js\?v=jsonld-1/);
+  assert.equal(/app\.js\?v=agents-1/.test(html), false);
+});
+
+test("itemListJsonLd names receive wallets from the shipped function, not payers", () => {
+  const itemListJsonLd = shippedItemListJsonLd();
+  const json = itemListJsonLd(
+    [
+      { merchant: "RecvPayTo111111111111111111111111111", rank_in_lane: 1 },
+      { merchant: "RecvPayTo222222222222222222222222222", rank_in_lane: 2 },
+    ],
+    "ranked",
+    "https://settled.twzrd.xyz",
+  );
+  assert.equal(json["@context"], "https://schema.org");
+  assert.equal(json["@type"], "ItemList");
+  assert.equal(json.numberOfItems, 2);
+  assert.equal(json.itemListElement[0]["@type"], "ListItem");
+  assert.equal(json.itemListElement[0].position, 1);
+  assert.equal(json.itemListElement[0].name, "RecvPayTo111111111111111111111111111");
+  assert.equal(
+    json.itemListElement[0].url,
+    "https://settled.twzrd.xyz/seller/RecvPayTo111111111111111111111111111",
+  );
+  assert.match(json.name, /receive-wallet/);
+  assert.match(json.name, /not MRR/i);
+  assert.match(json.description, /receive wallets \(payTo\)/);
+  assert.match(json.description, /Not MRR/);
+  assert.match(json.description, /Not the payer\/agent board/);
+  assert.equal(json.name.toLowerCase().includes("mrr") && !/not mrr/i.test(json.name), false);
+});
