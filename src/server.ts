@@ -5,6 +5,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import type { Store } from "./store.ts";
 import { handleMcp } from "./mcp.ts";
 import { renderLlmsTxt } from "./llms.ts";
+import { createDeliverySource, renderDeliveryHtml } from "./delivery.ts";
 import type { Config } from "./config.ts";
 
 function clampLimit(raw: string | undefined, fallback: number): number {
@@ -13,8 +14,19 @@ function clampLimit(raw: string | undefined, fallback: number): number {
   return Math.max(1, Math.min(200, Math.floor(n)));
 }
 
-export function createApp(store: Store, config: Config, publicDir = "public"): Hono {
+export function createApp(
+  store: Store,
+  config: Config,
+  publicDir = "public",
+  opts: { fetchImpl?: typeof fetch; now?: () => number } = {},
+): Hono {
   const app = new Hono();
+  const loadDelivery = createDeliverySource({
+    intelBase: config.intelBase,
+    publicDir,
+    fetchImpl: opts.fetchImpl,
+    now: opts.now,
+  });
 
   app.get("/health", (c) => {
     const h = store.health();
@@ -65,6 +77,13 @@ export function createApp(store: Store, config: Config, publicDir = "public"): H
     const body = await c.req.json().catch(() => null);
     return c.json(handleMcp(store, body));
   });
+
+  // N of M live x402 sellers that delivered to a real paying client. Relays
+  // intel's x402_delivery_probes summary (5 min cache); falls back to the
+  // committed snapshot and says so. Server-rendered and escaped: resource
+  // URLs are seller-controlled strings.
+  app.get("/delivery", async (c) => c.html(renderDeliveryHtml(await loadDelivery()), 200, { "cache-control": "no-store" }));
+  app.get("/delivery.json", async (c) => c.json(await loadDelivery(), 200, { "cache-control": "no-store" }));
 
   const indexFile = path.join(publicDir, "index.html");
   app.get("/", async (c) => c.html(await readFile(indexFile, "utf8")));
