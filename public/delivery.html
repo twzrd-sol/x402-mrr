@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>x402 delivery probes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="canonical" href="https://settled.twzrd.xyz/delivery.html">
+</head>
+<body>
+  <p id="nm">…</p>
+  <table>
+    <thead>
+      <tr><th>resource</th><th>outcome</th><th>failure_class</th><th>http</th><th>settlement_tx</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <script>
+    fetch("/delivery.json", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => {
+        document.getElementById("nm").textContent =
+          d.n_delivered + " of " + d.m_probed + " live x402 sellers deliver to a paying client";
+        const tb = document.getElementById("rows");
+        for (const s of d.sellers || []) {
+          const tr = document.createElement("tr");
+          const tx = s.settlement_tx ? s.settlement_tx.slice(0, 8) + "…" : "";
+          tr.innerHTML =
+            "<td>" + s.resource_url + "</td>" +
+            "<td>" + s.outcome + "</td>" +
+            "<td>" + (s.failure_class || "") + "</td>" +
+            "<td>" + (s.http_status == null ? "" : s.http_status) + "</td>" +
+            "<td>" + tx + "</td>";
+          tb.appendChild(tr);
+        }
+      });
+  </script>
+</body>
+</html>
