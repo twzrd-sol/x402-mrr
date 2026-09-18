@@ -102,6 +102,11 @@ test("GET / advertises JSON and llms alternate feeds", async () => {
   assert.match(html, /\/api\/leaderboard/);
   assert.match(html, /\/llms\.txt/);
   assert.match(html, /receive-wallet/);
+  assert.match(html, /rel="canonical"/);
+  assert.match(html, /https:\/\/settled\.twzrd\.xyz\//);
+  assert.match(html, /property="og:title"/);
+  assert.match(html, /receive-wallet board/);
+  assert.match(html, /Not the payer board at twzrd\.xyz\/leaderboard/);
 });
 
 test("GET /app.js forbids shared cache and keeps overlay copy", async () => {
