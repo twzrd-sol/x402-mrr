@@ -90,7 +90,7 @@ test("shipped honesty copy forbids calling the metric MRR", () => {
   assert.match(HONESTY.window, /slide off this board/);
 });
 
-test("overnight queue names holds and at least three remaining slices", () => {
+test("overnight queue names holds and the remaining origin-boot and MCP slices", () => {
   const queue = readFileSync(path.join(root, "ops", "OVERNIGHT.md"), "utf8");
   assert.match(queue, /x402-mrr\.service/);
   assert.match(queue, /cloudflared-battleship/);
@@ -98,8 +98,14 @@ test("overnight queue names holds and at least three remaining slices", () => {
   assert.match(queue, /wzrd-final/);
   assert.match(queue, /never MRR|not MRR|not-MRR/);
   assert.match(queue, /## Remaining/);
+  assert.match(queue, /origin boot/);
+  assert.match(queue, /MCP `leaderboard`/);
   const remaining = [...queue.matchAll(/^\d+\. \*\*(SHIP|HOLD)\*\*/gm)];
-  assert.ok(remaining.length >= 3, `need >=3 remaining slices, got ${remaining.length}`);
+  assert.ok(remaining.length >= 2, `need >=2 remaining slices, got ${remaining.length}`);
+  assert.ok(
+    remaining.every((m) => m[1] === "HOLD"),
+    "queued SHIP slices should be empty; remaining are HOLD",
+  );
 });
 
 test("board JS explains the 90d window and unevaluated lane", () => {
@@ -124,6 +130,23 @@ test("board JS explains the 90d window and unevaluated lane", () => {
   assert.match(html, /\/api\/leaderboard/);
   assert.match(html, /\/llms\.txt/);
   assert.match(html, /receive-wallet/);
+});
+
+test("index.html canonical and Open Graph name the receive-wallet board, not the payer board", () => {
+  const html = readFileSync(path.join(root, "public", "index.html"), "utf8");
+  assert.match(html, /rel="canonical"/);
+  assert.match(html, /href="https:\/\/settled\.twzrd\.xyz\/"/);
+  assert.match(html, /property="og:url"/);
+  assert.match(html, /content="https:\/\/settled\.twzrd\.xyz\/"/);
+  assert.match(html, /property="og:title"/);
+  assert.match(html, /receive-wallet board/);
+  assert.match(html, /property="og:description"/);
+  assert.match(html, /Not the payer board at twzrd\.xyz\/leaderboard/);
+  assert.match(html, /Not MRR/);
+  const ogUrl = html.match(/property="og:url"\s+content="([^"]+)"/);
+  assert.ok(ogUrl, "og:url must be present");
+  assert.equal(ogUrl[1], "https://settled.twzrd.xyz/");
+  assert.equal(ogUrl[1].includes("twzrd.xyz/leaderboard"), false);
 });
 
 function shippedItemListJsonLd() {
