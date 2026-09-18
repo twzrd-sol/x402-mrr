@@ -109,6 +109,50 @@ function table(rows) {
   </table>`;
 }
 
+function itemListJsonLd(rows, lane, origin) {
+  const laneLabel =
+    lane === "ranked" ? "confirmed" : lane === "flagged" ? "flagged" : lane === "unevaluated" ? "unevaluated" : String(lane || "unknown");
+  const list = Array.isArray(rows) ? rows : [];
+  const base = String(origin || "").replace(/\/$/, "");
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `Settled receive-wallet ${laneLabel} lane (observed USD, not MRR)`,
+    description:
+      "ItemList of x402 receive wallets (payTo) on the visible Settled lane. Not the payer/agent board at twzrd.xyz/leaderboard. Not MRR.",
+    numberOfItems: list.length,
+    itemListElement: list.map((row, i) => {
+      const name = String(row.merchant || "");
+      const url = base && name ? `${base}/seller/${encodeURIComponent(name)}` : "";
+      const item = { "@type": "ListItem", position: Number(row.rank_in_lane) || i + 1, name };
+      if (url) item.url = url;
+      return item;
+    }),
+  };
+}
+
+function rowsForLane(board, lane) {
+  if (!board) return [];
+  if (lane === "ranked") return board.ranked?.rows || [];
+  if (lane === "flagged") return board.flagged?.rows || [];
+  return board.unevaluated?.rows || [];
+}
+
+function injectItemListJsonLd(rows, lane) {
+  let el = document.getElementById("settled-jsonld");
+  if (!el) {
+    el = document.createElement("script");
+    el.type = "application/ld+json";
+    el.id = "settled-jsonld";
+    document.head.appendChild(el);
+  }
+  el.textContent = JSON.stringify(itemListJsonLd(rows, lane, window.location.origin));
+}
+
+function clearItemListJsonLd() {
+  document.getElementById("settled-jsonld")?.remove();
+}
+
 function bindRows(root) {
   root.querySelectorAll("tr.rowlink").forEach((tr) => {
     const go = () => {
@@ -136,7 +180,10 @@ function colophon(board) {
   </footer>`;
 }
 
+let lastBoard = null;
+
 function renderBoard(board) {
+  lastBoard = board;
   const s = board.stats;
   const max = Math.max(s.ranked_volume_usd_90d, s.unevaluated_volume_usd_90d, s.flagged_volume_usd_90d, 1);
   const fetched = board.source.fetched_at ? new Date(board.source.fetched_at).toUTCString() : "no snapshot yet";
@@ -210,6 +257,7 @@ function showLane(lane) {
   panels.forEach((p) => {
     p.hidden = p.id !== `panel-${name}`;
   });
+  if (lastBoard) injectItemListJsonLd(rowsForLane(lastBoard, name), name);
 }
 
 function bindTabs() {
@@ -228,6 +276,8 @@ function bindTabs() {
 }
 
 function renderDetail(payload) {
+  lastBoard = null;
+  clearItemListJsonLd();
   const row = payload.seller;
   const links = payload.links || {};
   app.innerHTML = `<main class="page detail">
